@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using WebApplication4.DSConn;
 using WebApplication4.Models;
@@ -44,8 +44,16 @@ namespace WebApplication4.Controllers
         {
             var getData = from em in _Con.Employees
                           join dep in _Con.Departments on em.DepRef equals dep.ID
-                          select new {em.Name, dep.DepartmentName, em.Image,
-                              em.Specialty, em.Address, em.Email, em.Phone, em.HireDate};
+                          select new {
+                              em.Name,
+                              dep.DepartmentName,
+                              em.Image,
+                              em.Specialty,
+                              em.Address,
+                              em.Email,
+                              em.Phone,
+                              em.HireDate
+                          };
 
             JavaScriptSerializer jsData = new JavaScriptSerializer();
             jsData.MaxJsonLength = int.MaxValue;
@@ -93,9 +101,21 @@ namespace WebApplication4.Controllers
         {
             var getLog = (from log in _Con.Employees
                           where log.UserName == userName && log.Password == password
-                          select new { log.Name }).ToList();
+                          select new { log.Id ,log.Name, log.Email, log.Specialty}).ToList();
             int count = getLog.Count();
-            return count.ToString();
+            if(count != 0)
+            {
+
+                JavaScriptSerializer jsData = new JavaScriptSerializer();
+                jsData.MaxJsonLength = int.MaxValue;
+                string Val = jsData.Serialize(getLog);
+                return Val;
+            }
+            else
+            {
+                return count.ToString();
+            }
+            
         }
     }
 }
